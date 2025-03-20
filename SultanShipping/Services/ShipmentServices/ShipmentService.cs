@@ -18,6 +18,8 @@ namespace SultanShipping.Services.ShipmentServices
         public async Task<IEnumerable<ShipmentDto>> GetAllShipmentsAsync()
         {
 
+            try
+            {
                 var shipments = await dbContext.CustomerShipments
                     .Include(s => s.Customer)
                     .Include(s => s.MasterShipment)
@@ -26,6 +28,14 @@ namespace SultanShipping.Services.ShipmentServices
 
                 var shipmentDtos = _mapper.Map<IEnumerable<ShipmentDto>>(shipments);
                 return shipmentDtos;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}"); // Log the error
+                Console.WriteLine($"StackTrace: {ex.StackTrace}");
+                throw;
+            }
+
         }
 
         public async Task<Result<ShipmentDto>> GetShipmentByIdAsync(int id)
@@ -38,9 +48,18 @@ namespace SultanShipping.Services.ShipmentServices
 
                 if (shipment is null)
                     return Result.Failure<ShipmentDto>(CustomerShipmentsErrors.CustomerShipmentNotFound);
-
+            try
+            {
                 var shipmentDto = _mapper.Map<ShipmentDto>(shipment);
                 return Result.Success(shipmentDto);
+
+
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
 
         public async Task<Result<ShipmentTrackingDto>> TrackShipmentAsync(string trackingNumber)
@@ -66,15 +85,24 @@ namespace SultanShipping.Services.ShipmentServices
 
 
                 var shipment = _mapper.Map<CustomerShipment>(shipmentDto);
-
                 shipment.MasterShipmentId = mainShipmentId;
                 shipment.Status = mainShipment.Status;
                 shipment.TrackingNumber = $"SUB-{Guid.NewGuid().ToString().Substring(0, 8)}";
 
                 dbContext.CustomerShipments.Add(shipment);
+
                 await dbContext.SaveChangesAsync();
 
+            try
+            {
+
                 return Result.Success(_mapper.Map<ShipmentDto>(shipment));
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
 
         public async Task<Result<StatusUpdateDto>> AddStatusUpdateAsync(int id, StatusUpdateCreateDto statusUpdateDto)
@@ -89,6 +117,7 @@ namespace SultanShipping.Services.ShipmentServices
                 var statusUpdate = _mapper.Map<CustomerShipmentUpdate>(statusUpdateDto);
                 statusUpdate.CustomerShipmentId = id;
                 statusUpdate.UpdateDate = DateTime.Now;
+            
 
                 dbContext.CustomerShipmentUpdates.Add(statusUpdate);
 

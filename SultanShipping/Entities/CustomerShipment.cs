@@ -23,7 +23,7 @@ public class CustomerShipment
     public bool IsCancelled { get; set; } = false;
 
     [MaxLength(500)]
-    public string CancellationReason { get; set; }
+    public string? CancellationReason { get; set; }
 
     public DateTime? CancellationDate { get; set; }
 

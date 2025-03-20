@@ -89,10 +89,19 @@ public class MappingConfigurations : IRegister
             .Ignore(dest => dest.CreatedAt)
             .Ignore(dest => dest.CreatedBy);
 
-        // CustomerShipment mappings
         TypeAdapterConfig<CustomerShipment, ShipmentDto>.NewConfig()
+            .Map(dest => dest.Id, src => src.Id)
             .Map(dest => dest.TrackingNumber, src => src.TrackingNumber)
-            .Map(dest => dest.Status, src => src.Status);
+            .Map(dest => dest.CustomerId, src => src.CustomerId) // Ensure correct type
+            .Map(dest => dest.MainShipmentId, src => src.MasterShipmentId)
+            .Map(dest => dest.DeliveryAddress, src => src.DeliveryAddress)
+            .Map(dest => dest.ExpectedDeliveryDate, src => src.MasterShipment.ExpectedDeliveryDate)
+            .Map(dest => dest.Status, src => src.Status.ToString()) // Convert enum to string
+            .Map(dest => dest.IsCancelled, src => src.IsCancelled)
+            .Map(dest => dest.Customer, src => src.Customer.Adapt<CustomerDto>())
+            .Map(dest => dest.StatusUpdates, src => src.CustomerUpdates.Adapt<ICollection<StatusUpdateDto>>());
+
+
 
         TypeAdapterConfig<ShipmentCreateDto, CustomerShipment>.NewConfig()
             .Map(dest => dest.TrackingNumber, src => src.TrackingNumber)

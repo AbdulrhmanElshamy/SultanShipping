@@ -11,14 +11,14 @@ namespace SultanShipping.Controllers
     public class ShipmentsController(IShipmentService service) : ControllerBase
     {
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ShipmentDto>>> GetAllShipments()
+        public async Task<IActionResult> GetAllShipments()
         {
             var shipments = await service.GetAllShipmentsAsync();
             return Ok(shipments);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ShipmentDto>> GetShipmentById(int id)
+        public async Task<IActionResult> GetShipmentById(int id)
         {
             var result = await service.GetShipmentByIdAsync(id);
 
@@ -26,7 +26,7 @@ namespace SultanShipping.Controllers
         }
 
         [HttpGet("track/{trackingNumber}")]
-        public async Task<ActionResult<ShipmentTrackingDto>> TrackShipment(string trackingNumber)
+        public async Task<IActionResult> TrackShipment(string trackingNumber)
         {
             var result = await service.TrackShipmentAsync(trackingNumber);
 
@@ -34,7 +34,7 @@ namespace SultanShipping.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ShipmentDto>> CreateShipment([FromBody] ShipmentCreateDto shipmentDto, [FromQuery] int mainShipmentId)
+        public async Task<IActionResult> CreateShipment([FromBody] ShipmentCreateDto shipmentDto, [FromQuery] int mainShipmentId)
         {
             var result = await service.CreateShipmentAsync(shipmentDto, mainShipmentId);
 
@@ -45,7 +45,7 @@ namespace SultanShipping.Controllers
         }
 
         [HttpPost("{id}/status")]
-        public async Task<ActionResult<StatusUpdateDto>> AddStatusUpdate(int id, [FromBody] StatusUpdateCreateDto statusUpdateDto)
+        public async Task<IActionResult> AddStatusUpdate(int id, [FromBody] StatusUpdateCreateDto statusUpdateDto)
         {
             var result = await service.AddStatusUpdateAsync(id, statusUpdateDto);
 
@@ -54,7 +54,7 @@ namespace SultanShipping.Controllers
         }
 
         [HttpPost("{id}/cancel")]
-        public async Task<ActionResult> CancelShipment(int id, string cancellationReason)
+        public async Task<IActionResult> CancelShipment(int id, string cancellationReason)
         {
             var result = await service.CancelShipmentAsync(id, cancellationReason);
 

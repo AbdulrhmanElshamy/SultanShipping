@@ -5,11 +5,12 @@ using SultanShipping.Abstractions;
 using SultanShipping.Contracts.Shipments;
 using SultanShipping.Entities;
 using SultanShipping.Errors;
+using SultanShipping.Extensions;
 using SultanShipping.Persistence;
 
 namespace SultanShipping.Services.MainShipmentServices
 {
-    public class MainShipmentService(ApplicationDbContext _context, IMapper _mapper, IEmailSender emailService):IMainShipmentService
+    public class MainShipmentService(ApplicationDbContext _context, IMapper _mapper, IEmailSender emailService,IHttpContextAccessor httpContextAccessor):IMainShipmentService
     {
 
         public async Task<IEnumerable<MainShipmentDto>> GetAllMainShipmentsAsync()
@@ -44,7 +45,8 @@ namespace SultanShipping.Services.MainShipmentServices
         {
                 var mainShipment = _mapper.Map<MasterShipment>(mainShipmentDto);
 
-                _context.MasterShipments.Add(mainShipment);
+            mainShipment.CreatedBy = httpContextAccessor.HttpContext.User.GetUserId() ?? "";
+                await _context.MasterShipments.AddAsync(mainShipment);
                 await _context.SaveChangesAsync();
 
                 var mainShipmentDtoResult = _mapper.Map<MainShipmentDto>(mainShipment);
@@ -81,7 +83,7 @@ namespace SultanShipping.Services.MainShipmentServices
                 var statusUpdate = _mapper.Map<ShipmentUpdate>(statusUpdateDto);
                 statusUpdate.MasterShipmentId = id;
                 statusUpdate.UpdateDate = DateTime.Now;
-
+            statusUpdate.UpdatedBy = httpContextAccessor.HttpContext.User.GetUserId() ?? "";
                 _context.ShipmentUpdates.Add(statusUpdate);
 
 

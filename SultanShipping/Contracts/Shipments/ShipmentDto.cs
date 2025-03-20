@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
         public string TrackingNumber { get; set; }
-        public int CustomerId { get; set; }
+        public string CustomerId { get; set; }
         public int MainShipmentId { get; set; }
         public string DeliveryAddress { get; set; }
         public DateTime ExpectedDeliveryDate { get; set; }
