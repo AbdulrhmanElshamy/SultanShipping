@@ -6,5 +6,6 @@ public record CreateUserRequest(
     string Email,
     string Password,
     string ShippingAddress,
-    IList<string> Roles
+    IList<string> Roles,
+    string Phone
 );

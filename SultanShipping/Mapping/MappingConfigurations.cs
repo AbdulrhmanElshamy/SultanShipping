@@ -19,10 +19,15 @@ public class MappingConfigurations : IRegister
 
         config.NewConfig<CreateUserRequest, ApplicationUser>()
             .Map(dest => dest.UserName, src => src.Email)
+                        .Map(dest => dest.PhoneNumber, src => src.Phone)
+                        .Map(dest => dest.ShippingAddress, src => src.ShippingAddress)
+
             .Map(dest => dest.EmailConfirmed, src => true);
 
         config.NewConfig<UpdateUserRequest, ApplicationUser>()
             .Map(dest => dest.UserName, src => src.Email)
+                        .Map(dest => dest.PhoneNumber,src => src.phone)
+                        .Map(dest => dest.ShippingAddress,src => src.ShippingAddress)
             .Map(dest => dest.NormalizedUserName, src => src.Email.ToUpper());
 
 
