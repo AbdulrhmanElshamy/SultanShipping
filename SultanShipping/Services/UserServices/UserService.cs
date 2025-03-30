@@ -8,6 +8,7 @@ using SultanShipping.Entities;
 using SultanShipping.Errors;
 using SultanShipping.Persistence;
 using SultanShipping.RoleServices.Services;
+using static SultanShipping.Abstractions.Consts.DefaultRoles;
 
 namespace SultanShipping.UserServices.Services;
 
@@ -66,10 +67,6 @@ public class UserService(UserManager<ApplicationUser> userManager,
         if (emailIsExists)
             return Result.Failure<UserResponse>(UserErrors.DuplicatedEmail);
 
-        var allowedRoles = await _roleService.GetAllAsync(cancellationToken: cancellationToken);
-
-        if (request.Roles.Except(allowedRoles.Select(x => x.Name)).Any())
-            return Result.Failure<UserResponse>(UserErrors.InvalidRoles);
 
         var user = request.Adapt<ApplicationUser>();
 
@@ -77,9 +74,12 @@ public class UserService(UserManager<ApplicationUser> userManager,
 
         if (result.Succeeded)
         {
-            await _userManager.AddToRolesAsync(user, request.Roles);
+            await _userManager.AddToRolesAsync(user, ["Member"]);
 
-            var response = (user, request.Roles).Adapt<UserResponse>();
+            var roles = new[] { "Member" };
+
+            var response = user.Adapt<UserResponse>();
+            
 
             return Result.Success(response);
         }
@@ -96,11 +96,7 @@ public class UserService(UserManager<ApplicationUser> userManager,
         if (emailIsExists)
             return Result.Failure(UserErrors.DuplicatedEmail);
 
-        var allowedRoles = await _roleService.GetAllAsync(cancellationToken: cancellationToken);
-
-        if (request.Roles.Except(allowedRoles.Select(x => x.Name)).Any())
-            return Result.Failure(UserErrors.InvalidRoles);
-
+    
         if (await _userManager.FindByIdAsync(id) is not { } user)
             return Result.Failure(UserErrors.UserNotFound);
 
@@ -114,7 +110,7 @@ public class UserService(UserManager<ApplicationUser> userManager,
                 .Where(x => x.UserId == id)
                 .ExecuteDeleteAsync(cancellationToken);
 
-            await _userManager.AddToRolesAsync(user, request.Roles);
+            await _userManager.AddToRolesAsync(user, ["Member"]);
 
             return Result.Success();
         }

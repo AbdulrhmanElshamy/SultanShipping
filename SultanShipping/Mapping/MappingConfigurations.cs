@@ -109,7 +109,6 @@ public class MappingConfigurations : IRegister
 
 
         TypeAdapterConfig<ShipmentCreateDto, CustomerShipment>.NewConfig()
-            .Map(dest => dest.TrackingNumber, src => src.TrackingNumber)
             .Map(dest => dest.DeliveryAddress, src => src.DeliveryAddress)
             .Map(dest => dest.CustomerId, src => src.CustomerId)
             .Ignore(dest => dest.Id)

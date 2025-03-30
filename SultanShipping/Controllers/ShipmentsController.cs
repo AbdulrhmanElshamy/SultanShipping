@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SultanShipping.Abstractions;
 using SultanShipping.Contracts.Shipments;
@@ -11,6 +12,7 @@ namespace SultanShipping.Controllers
     public class ShipmentsController(IShipmentService service) : ControllerBase
     {
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllShipments()
         {
             var shipments = await service.GetAllShipmentsAsync();
@@ -18,6 +20,7 @@ namespace SultanShipping.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetShipmentById(int id)
         {
             var result = await service.GetShipmentByIdAsync(id);
@@ -25,6 +28,7 @@ namespace SultanShipping.Controllers
             return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
         }
 
+        [Authorize]
         [HttpGet("track/{trackingNumber}")]
         public async Task<IActionResult> TrackShipment(string trackingNumber)
         {
@@ -34,6 +38,7 @@ namespace SultanShipping.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateShipment([FromBody] ShipmentCreateDto shipmentDto, [FromQuery] int mainShipmentId)
         {
             var result = await service.CreateShipmentAsync(shipmentDto, mainShipmentId);
@@ -45,6 +50,7 @@ namespace SultanShipping.Controllers
         }
 
         [HttpPost("{id}/status")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddStatusUpdate(int id, [FromBody] StatusUpdateCreateDto statusUpdateDto)
         {
             var result = await service.AddStatusUpdateAsync(id, statusUpdateDto);
@@ -54,6 +60,7 @@ namespace SultanShipping.Controllers
         }
 
         [HttpPost("{id}/cancel")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CancelShipment(int id, string cancellationReason)
         {
             var result = await service.CancelShipmentAsync(id, cancellationReason);

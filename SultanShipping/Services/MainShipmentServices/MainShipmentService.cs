@@ -44,7 +44,7 @@ namespace SultanShipping.Services.MainShipmentServices
         public async Task<Result<MainShipmentDto>> CreateMainShipmentAsync(MainShipmentCreateDto mainShipmentDto)
         {
                 var mainShipment = _mapper.Map<MasterShipment>(mainShipmentDto);
-
+                    mainShipment.TrackingNumber = $"Mian-{Guid.NewGuid().ToString().Substring(0, 8)}";
             mainShipment.CreatedBy = httpContextAccessor.HttpContext.User.GetUserId() ?? "";
                 await _context.MasterShipments.AddAsync(mainShipment);
                 await _context.SaveChangesAsync();
@@ -99,6 +99,7 @@ namespace SultanShipping.Services.MainShipmentServices
                         Location = statusUpdate.Location,
                         Notes = statusUpdate.Notes,
                         UpdateDate = DateTime.Now,
+                        UpdatedBy = httpContextAccessor.HttpContext.User.GetUserId() ?? ""
                     };
 
                     _context.CustomerShipmentUpdates.Add(shipmentStatusUpdate);
@@ -108,8 +109,16 @@ namespace SultanShipping.Services.MainShipmentServices
                   
 
                 }
-
+            try
+            {
                 await _context.SaveChangesAsync();
+
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
 
                 //ToDo :SendEmail
 

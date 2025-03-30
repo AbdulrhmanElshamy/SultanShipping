@@ -9,7 +9,7 @@ namespace SultanShipping.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class MainShipmentController(IMainShipmentService service) : ControllerBase
     {
 
