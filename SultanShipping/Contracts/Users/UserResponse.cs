@@ -6,5 +6,7 @@ public record UserResponse(
     string LastName,
     string Email,
     bool IsDisabled,
-    IEnumerable<string> Roles
+    IEnumerable<string> Roles,
+    string ShippingAddress,
+    string PhoneNumber
 );

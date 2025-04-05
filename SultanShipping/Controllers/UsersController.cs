@@ -35,7 +35,8 @@ public class UsersController(IUserService userService) : ControllerBase
         return result.IsSuccess ? CreatedAtAction(nameof(Get), new { result.Value.Id }, result.Value) : result.ToProblem();
     }
 
-    [HttpPut("{id}")]
+    //[HttpPut("{id}")]
+    [HttpPost("Update/{id}")]
     public async Task<IActionResult> Update([FromRoute] string id, [FromBody] UpdateUserRequest request, CancellationToken cancellationToken)
     {
         var result = await _userService.UpdateAsync(id, request, cancellationToken);
@@ -43,14 +44,16 @@ public class UsersController(IUserService userService) : ControllerBase
         return result.IsSuccess ? NoContent() : result.ToProblem();
     }
 
-    [HttpPut("{id}/toggle-status")]
+    //[HttpPut("{id}/toggle-status")]
+    [HttpPost("{id}/toggle-status")]
     public async Task<IActionResult> ToggleStatus([FromRoute] string id)
     {
         var result = await _userService.ToggleStatus(id);
         return result.IsSuccess ? NoContent() : result.ToProblem();
     }
 
-    [HttpPut("{id}/unlock")]
+    //[HttpPut("{id}/unlock")]
+    [HttpPost("{id}/unlock")]
     public async Task<IActionResult> Unlock([FromRoute] string id)
     {
         var result = await _userService.Unlock(id);

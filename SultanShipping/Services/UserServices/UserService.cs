@@ -1,11 +1,13 @@
 ﻿using Mapster;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using SultanShipping.Abstractions;
 using SultanShipping.Abstractions.Consts;
 using SultanShipping.Contracts.Users;
 using SultanShipping.Entities;
 using SultanShipping.Errors;
+using SultanShipping.Helpers;
 using SultanShipping.Persistence;
 using SultanShipping.RoleServices.Services;
 using static SultanShipping.Abstractions.Consts.DefaultRoles;
@@ -13,12 +15,13 @@ using static SultanShipping.Abstractions.Consts.DefaultRoles;
 namespace SultanShipping.UserServices.Services;
 
 public class UserService(UserManager<ApplicationUser> userManager,
-    IRoleService roleService,
-    ApplicationDbContext context) : IUserService
+IRoleService roleService,
+    ApplicationDbContext context, IEmailSender emailSender) : IUserService
 {
     private readonly UserManager<ApplicationUser> _userManager = userManager;
     private readonly IRoleService _roleService = roleService;
     private readonly ApplicationDbContext _context = context;
+    private readonly IEmailSender _emailSender = emailSender;
 
     public async Task<IEnumerable<UserResponse>> GetAllAsync(CancellationToken cancellationToken = default) =>
         await (from u in _context.Users
@@ -33,10 +36,12 @@ public class UserService(UserManager<ApplicationUser> userManager,
                    u.LastName,
                    u.Email,
                    u.IsDisabled,
-                   Roles = roles.Select(x => x.Name!).ToList()
+                   Roles = roles.Select(x => x.Name!).ToList(),
+                   u.ShippingAddress,
+                   u.PhoneNumber
                }
                 )
-                .GroupBy(u => new { u.Id, u.FirstName, u.LastName, u.Email, u.IsDisabled })
+                .GroupBy(u => new { u.Id, u.FirstName, u.LastName, u.Email, u.IsDisabled,u.ShippingAddress,u.PhoneNumber })
                 .Select(u => new UserResponse
                 (
                     u.Key.Id,
@@ -44,7 +49,9 @@ public class UserService(UserManager<ApplicationUser> userManager,
                     u.Key.LastName,
                     u.Key.Email,
                     u.Key.IsDisabled,
-                    u.SelectMany(x => x.Roles)
+                    u.SelectMany(x => x.Roles),
+                    u.Key.ShippingAddress,
+                    u.Key.PhoneNumber
                 ))
                .ToListAsync(cancellationToken);
 
@@ -79,7 +86,27 @@ public class UserService(UserManager<ApplicationUser> userManager,
             var roles = new[] { "Member" };
 
             var response = user.Adapt<UserResponse>();
-            
+
+
+            //var placeholders = new Dictionary<string, string>
+            //    {
+            //        { "{{username}}", user.FirstName},
+            //        { "{{email}}", user.Email},
+            //        { "{{password}}", request.Password},
+            //    };
+
+            //var body = EmailBodyBuilder.GenerateEmailBody("AddUser", placeholders);
+            //try
+            //{
+            //await emailSender.SendEmailAsync(user.Email!, $"📣 Your account added in sultan shipping website", body);
+
+            //}
+            //catch (Exception ex)
+            //{
+
+            //    throw;
+            //}
+
 
             return Result.Success(response);
         }

@@ -128,17 +128,17 @@ namespace SultanShipping.Services.ShipmentServices
                 await dbContext.SaveChangesAsync();
 
 
-            var placeholders = new Dictionary<string, string>
-                {
-                    { "{{name}}", shipment.Customer.FirstName },
-                    { "{{pollTill}}", shipment.Customer.Email },
-                    { "{{endDate}}", shipment.Customer.Email },
-                    { "{{url}}", shipment.Customer.Email }
-                };
+            //var placeholders = new Dictionary<string, string>
+            //    {
+            //        { "{{name}}", shipment.Customer.FirstName },
+            //        { "{{pollTill}}", shipment.Customer.Email },
+            //        { "{{endDate}}", shipment.Customer.Email },
+            //        { "{{url}}", shipment.Customer.Email }
+            //    };
 
-            var body = EmailBodyBuilder.GenerateEmailBody("PollNotification", placeholders);
+            //var body = EmailBodyBuilder.GenerateEmailBody("PollNotification", placeholders);
 
-            await emailSender.SendEmailAsync(shipment.Customer.Email!, $"📣 Survey Basket: New Poll - {shipment.Customer.Email}", body);
+            //await emailSender.SendEmailAsync(shipment.Customer.Email!, $"📣 Survey Basket: New Poll - {shipment.Customer.Email}", body);
             return Result.Success(_mapper.Map<StatusUpdateDto>(statusUpdate));
         }
 

@@ -21,7 +21,8 @@ public class AccountController(IUserService userService) : ControllerBase
         return Ok(result.Value);
     }
 
-    [HttpPut("info")]
+    //[HttpPut("info")]
+    [HttpPost("info")]
     public async Task<IActionResult> Info([FromBody] UpdateProfileRequest request)
     {
         await _userService.UpdateProfileAsync(User.GetUserId()!, request);
@@ -29,7 +30,8 @@ public class AccountController(IUserService userService) : ControllerBase
         return NoContent();
     }
 
-    [HttpPut("change-password")]
+    //[HttpPut("change-password")]
+    [HttpPost("change-password")]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
     {
         var result = await _userService.ChangePasswordAsync(User.GetUserId()!, request);

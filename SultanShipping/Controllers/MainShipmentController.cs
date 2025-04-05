@@ -40,7 +40,8 @@ namespace SultanShipping.Controllers
             return result.ToProblem();
         }
 
-        [HttpPut("{id}")]
+        //[HttpPut("{id}")]
+        [HttpPost("UpdateMainShipment/{id}")]
         public async Task<ActionResult> UpdateMainShipment(int id, [FromBody] MainShipmentUpdateDto mainShipmentDto)
         {
             var result = await service.UpdateMainShipmentAsync(id, mainShipmentDto);
