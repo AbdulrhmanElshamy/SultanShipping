@@ -62,6 +62,13 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .WithOne(s => s.Customer)
             .HasForeignKey(s => s.CustomerId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<ApplicationUser>()
+        .HasQueryFilter(c => !c.IsDisabled);
+
+        builder.Entity<CustomerShipment>()
+            .HasQueryFilter(c => !c.Customer.IsDisabled);
+
         base.OnModelCreating(builder);
 
     }
